@@ -1,5 +1,5 @@
 <p align="center">
-  <h1 align="center">typefully</h1>
+  <h1 align="center">typefully CLI</h1>
   <p align="center">A powerful CLI client for the Typefully API v2. Create, schedule, and manage your social media content from the terminal.</p>
 </p>
 
