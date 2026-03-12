@@ -29,8 +29,7 @@
 ### Homebrew
 
 ```bash
-brew tap ricardodantas/tap
-brew install typefully
+brew install ricardodantas/tap/typefully
 ```
 
 ### From crates.io
