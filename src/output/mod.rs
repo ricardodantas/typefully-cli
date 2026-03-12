@@ -12,8 +12,8 @@ pub struct SocialSetRow {
     /// Display name.
     #[tabled(rename = "Name")]
     pub name: String,
-    /// Connected platforms.
-    #[tabled(rename = "Platforms")]
+    /// Username.
+    #[tabled(rename = "Username")]
     pub platforms: String,
 }
 
@@ -86,9 +86,13 @@ pub fn truncate(s: &str, max: usize) -> String {
 }
 
 /// Extract a string field from a JSON value, returning an empty string on miss.
+#[must_use]
 pub fn json_str(v: &serde_json::Value, key: &str) -> String {
-    v.get(key)
-        .and_then(serde_json::Value::as_str)
-        .unwrap_or("")
-        .to_string()
+    match v.get(key) {
+        Some(serde_json::Value::String(s)) => s.clone(),
+        Some(serde_json::Value::Number(n)) => n.to_string(),
+        Some(serde_json::Value::Bool(b)) => b.to_string(),
+        Some(serde_json::Value::Null) | None => String::new(),
+        Some(other) => other.to_string(),
+    }
 }

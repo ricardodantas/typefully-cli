@@ -184,24 +184,23 @@ async fn cmd_sets(cli: &Cli, api: &impl TypefullyApi) -> Result<(), AppError> {
         return Ok(());
     }
     let empty = vec![];
-    let arr = sets.as_array().unwrap_or(&empty);
+    let arr = sets
+        .get("results")
+        .and_then(|v| v.as_array())
+        .or_else(|| sets.as_array())
+        .unwrap_or(&empty);
     let rows: Vec<SocialSetRow> = arr
         .iter()
         .map(|s| {
-            let platforms = s
-                .get("platforms")
-                .and_then(|p| p.as_array())
-                .map(|a| {
-                    a.iter()
-                        .filter_map(|v| v.as_str())
-                        .collect::<Vec<_>>()
-                        .join(", ")
-                })
-                .unwrap_or_default();
+            let username = s
+                .get("username")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string();
             SocialSetRow {
                 id: json_str(s, "id"),
                 name: json_str(s, "name"),
-                platforms,
+                platforms: username,
             }
         })
         .collect();
@@ -254,13 +253,17 @@ async fn cmd_draft(cli: &Cli, api: &impl TypefullyApi, cmd: &DraftCmd) -> Result
                 return Ok(());
             }
             let empty = vec![];
-            let arr = result.as_array().unwrap_or(&empty);
+            let arr = result
+                .get("results")
+                .and_then(|v| v.as_array())
+                .or_else(|| result.as_array())
+                .unwrap_or(&empty);
             let rows: Vec<DraftRow> = arr
                 .iter()
                 .map(|d| DraftRow {
                     id: json_str(d, "id"),
                     status: json_str(d, "status"),
-                    content: truncate(&json_str(d, "content"), 60),
+                    content: truncate(&json_str(d, "preview"), 60),
                     scheduled: json_str(d, "scheduled_date"),
                 })
                 .collect();
@@ -284,7 +287,41 @@ async fn cmd_draft(cli: &Cli, api: &impl TypefullyApi, cmd: &DraftCmd) -> Result
             let set_id = AppConfig::resolve_set_id(set.as_deref())?;
             let mut body = serde_json::json!({});
             if let Some(c) = content {
-                body["content"] = serde_json::json!(c);
+                // Fetch existing draft to determine enabled platforms
+                let existing = api.get_draft(&set_id, draft_id).await?;
+                let posts: Vec<&str> = c
+                    .split("\n---\n")
+                    .map(str::trim)
+                    .filter(|s| !s.is_empty())
+                    .collect();
+                let post_objects: Vec<serde_json::Value> = posts
+                    .iter()
+                    .map(|p| serde_json::json!({"text": p}))
+                    .collect();
+
+                let mut platforms_obj = serde_json::Map::new();
+                if let Some(existing_platforms) =
+                    existing.get("platforms").and_then(|p| p.as_object())
+                {
+                    for (key, val) in existing_platforms {
+                        let enabled = val
+                            .get("enabled")
+                            .and_then(serde_json::Value::as_bool)
+                            .unwrap_or(false);
+                        if enabled {
+                            platforms_obj.insert(
+                                key.clone(),
+                                serde_json::json!({
+                                    "enabled": true,
+                                    "posts": post_objects
+                                }),
+                            );
+                        }
+                    }
+                }
+                if !platforms_obj.is_empty() {
+                    body["platforms"] = serde_json::Value::Object(platforms_obj);
+                }
             }
             if let Some(pa) = publish_at {
                 body["publish_at"] = serde_json::json!(pa);
@@ -387,19 +424,26 @@ async fn cmd_draft_create(
         .filter(|s| !s.is_empty())
         .collect();
 
-    let platform_strs: Vec<String> = platforms.iter().map(ToString::to_string).collect();
-    let mut body = serde_json::json!({"platforms": platform_strs});
+    // Build posts array for the API
+    let post_objects: Vec<serde_json::Value> = posts
+        .iter()
+        .map(|p| serde_json::json!({"text": p}))
+        .collect();
 
-    if posts.len() > 1 {
-        body["posts"] = serde_json::json!(
-            posts
-                .iter()
-                .map(|p| serde_json::json!({"content": p}))
-                .collect::<Vec<_>>()
+    // Build platforms object: { "x": { "enabled": true, "posts": [...] }, ... }
+    let mut platforms_obj = serde_json::Map::new();
+    for p in platforms {
+        let key = p.to_string();
+        platforms_obj.insert(
+            key,
+            serde_json::json!({
+                "enabled": true,
+                "posts": post_objects
+            }),
         );
-    } else {
-        body["content"] = serde_json::json!(text);
     }
+
+    let mut body = serde_json::json!({"platforms": platforms_obj});
 
     if let Some(pa) = publish_at {
         body["publish_at"] = serde_json::json!(pa);
@@ -500,7 +544,11 @@ async fn cmd_tags(cli: &Cli, api: &impl TypefullyApi, cmd: &TagsCmd) -> Result<(
                 return Ok(());
             }
             let empty = vec![];
-            let arr = result.as_array().unwrap_or(&empty);
+            let arr = result
+                .get("results")
+                .and_then(|v| v.as_array())
+                .or_else(|| result.as_array())
+                .unwrap_or(&empty);
             let rows: Vec<TagRow> = arr
                 .iter()
                 .map(|t| TagRow {
