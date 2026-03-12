@@ -1,5 +1,5 @@
 ---
-name: typefully
+name: typefully-cli
 description: "Manage social media content via the Typefully CLI. Create, schedule, publish, and manage drafts across X, LinkedIn, Threads, Bluesky, and Mastodon from the terminal. Use when: (1) creating or publishing social media posts/threads, (2) scheduling content for specific times or next free slot, (3) listing or managing existing drafts, (4) uploading media for posts, (5) managing tags, (6) any Typefully API interaction from the command line. NOT for: direct web browser interactions with typefully.com."
 ---
 

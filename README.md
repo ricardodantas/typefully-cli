@@ -51,7 +51,7 @@ cargo install --path .
 This repo includes an [AI agent skill](https://skills.sh) so your coding agent knows how to use the Typefully CLI. Install it with:
 
 ```bash
-npx skills add ricardodantas/typefully-cli
+npx skills add ricardodantas/typefully-cli --skill typefully-cli
 ```
 
 The skill lives in `skills/typefully-cli/` and provides command reference and usage patterns for AI agents like Claude, Copilot, and Codex.
