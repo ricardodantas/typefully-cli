@@ -1,0 +1,23 @@
+{
+  "rules": [
+    "This is a Rust CLI project using edition 2024 with MSRV 1.91.",
+    "Use tokio async/await for all async operations. Never use reqwest::blocking.",
+    "Use thiserror for error types. Do not use anyhow or manual Display impls on errors.",
+    "Use tracing macros (debug!, info!, warn!) for logging. Never println! for diagnostics.",
+    "API keys must be wrapped in secrecy::SecretString. Only expose at the HTTP auth boundary.",
+    "The API client uses a trait (TypefullyApi) for testability. Command handlers accept &impl TypefullyApi.",
+    "Run 'cargo clippy -- -D warnings' before committing. Zero warnings required.",
+    "Never use em dashes in any text content. Use colons, commas, periods, or parentheses instead.",
+    "Add #[must_use] on pure public functions.",
+    "Add doc comments on all public items.",
+    "Use #[non_exhaustive] on public enums.",
+    "Derive Debug and Clone on structs where sensible.",
+    "Prefer &str over String in function parameters when ownership is not needed.",
+    "Module layout: src/api/ (trait + client + types), src/cli/ (clap), src/config/ (config), src/output/ (formatting), src/error.rs (errors).",
+    "Config file lives at ~/.config/typefully/config.toml (XDG via dirs crate).",
+    "API key resolution order: --api-key flag > TYPEFULLY_API_KEY env > config file.",
+    "Output: human-friendly tables by default, --json for raw JSON to stdout.",
+    "Exit codes: 0 success, 1 API/runtime error, 2 invalid usage.",
+    "License: GPL-3.0-only."
+  ]
+}
