@@ -24,6 +24,10 @@ typefully-cli/
     output/
       mod.rs         # Table rows, JSON output, formatting helpers
     error.rs         # Error hierarchy: AppError, ApiError, ConfigError
+  .github/
+    workflows/
+      ci.yml         # PR checks: test, clippy, fmt
+      release.yml    # Version bump, cross-compile, GitHub Release, crates.io, Homebrew
   Cargo.toml
   rustfmt.toml
   LICENSE            # GPL-3.0-only
@@ -78,6 +82,10 @@ typefully-cli/
 - Config file at `~/.config/typefully/config.toml` (via `dirs` crate for XDG)
 - Fields: `api_key`, `default_social_set_id`
 - Key resolution order: `--api-key` flag > `TYPEFULLY_API_KEY` env > config file
+
+### Branch
+- Default branch: `main` (not master)
+- All workflows and references use `main`
 
 ## Building and Testing
 

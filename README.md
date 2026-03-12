@@ -4,9 +4,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ricardodantas/typefully-cli/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License: GPL-3.0"></a>
+  <a href="https://github.com/ricardodantas/typefully-cli/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue.svg" alt="License: GPL-3.0"></a>
   <a href="https://crates.io/crates/typefully"><img src="https://img.shields.io/crates/v/typefully.svg" alt="crates.io"></a>
-  <a href="https://github.com/ricardodantas/typefully-cli/actions"><img src="https://img.shields.io/github/actions/workflow/status/ricardodantas/typefully-cli/ci.yml?branch=master" alt="CI"></a>
+  <a href="https://github.com/ricardodantas/typefully-cli/actions"><img src="https://img.shields.io/github/actions/workflow/status/ricardodantas/typefully-cli/ci.yml?branch=main" alt="CI"></a>
   <img src="https://img.shields.io/badge/rust-1.91%2B-orange.svg" alt="Rust 1.91+">
 </p>
 
@@ -26,18 +26,25 @@
 
 ## 📦 Installation
 
+### Homebrew
+
+```bash
+brew tap ricardodantas/tap
+brew install typefully
+```
+
+### From crates.io
+
+```bash
+cargo install typefully
+```
+
 ### From source
 
 ```bash
 git clone https://github.com/ricardodantas/typefully-cli.git
 cd typefully-cli
 cargo install --path .
-```
-
-### From crates.io (coming soon)
-
-```bash
-cargo install typefully
 ```
 
 ## 🚀 Quick Start
@@ -282,6 +289,14 @@ typefully tags list --json
 ```bash
 typefully tags create "product-launch"
 typefully tags create "weekly-update" --set set_abc123
+```
+
+### Self-Update
+
+Update typefully to the latest version. Automatically detects whether you installed via Homebrew or cargo:
+
+```bash
+typefully update
 ```
 
 ## 🌍 Global Flags
