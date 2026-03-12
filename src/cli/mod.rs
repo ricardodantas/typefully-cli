@@ -8,7 +8,11 @@ use crate::api::{DraftStatus, Platform};
 
 /// CLI client for the Typefully API v2.
 #[derive(Parser, Debug)]
-#[command(name = "typefully", version, about = "CLI client for the Typefully API v2")]
+#[command(
+    name = "typefully",
+    version,
+    about = "CLI client for the Typefully API v2"
+)]
 #[allow(clippy::struct_excessive_bools)]
 pub struct Cli {
     /// Subcommand to run.

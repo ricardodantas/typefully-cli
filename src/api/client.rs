@@ -6,8 +6,8 @@ use tracing::debug;
 
 use crate::error::ApiError;
 
-use super::types::DraftListParams;
 use super::TypefullyApi;
+use super::types::DraftListParams;
 
 const BASE_URL: &str = "https://api.typefully.com/v2";
 
@@ -102,9 +102,7 @@ impl TypefullyClient {
                 .and_then(|v| v.to_str().ok())
                 .unwrap_or("unknown")
                 .to_string();
-            return Err(ApiError::RateLimited {
-                retry_after: retry,
-            });
+            return Err(ApiError::RateLimited { retry_after: retry });
         }
 
         let text = resp.text().await?;
@@ -157,11 +155,7 @@ impl TypefullyApi for TypefullyClient {
             .await
     }
 
-    async fn get_draft(
-        &self,
-        set_id: &str,
-        draft_id: &str,
-    ) -> Result<serde_json::Value, ApiError> {
+    async fn get_draft(&self, set_id: &str, draft_id: &str) -> Result<serde_json::Value, ApiError> {
         self.get_json(&format!("/social-sets/{set_id}/drafts/{draft_id}"))
             .await
     }
@@ -237,11 +231,7 @@ impl TypefullyApi for TypefullyClient {
         self.get_json(&format!("/social-sets/{set_id}/tags")).await
     }
 
-    async fn create_tag(
-        &self,
-        set_id: &str,
-        name: &str,
-    ) -> Result<serde_json::Value, ApiError> {
+    async fn create_tag(&self, set_id: &str, name: &str) -> Result<serde_json::Value, ApiError> {
         let body = serde_json::json!({"name": name});
         self.post_json(&format!("/social-sets/{set_id}/tags"), &body)
             .await

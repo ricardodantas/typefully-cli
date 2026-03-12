@@ -87,9 +87,7 @@ impl AppConfig {
     }
 
     /// Resolve the social set ID from flag or config default.
-    pub fn resolve_set_id(
-        explicit: Option<&str>,
-    ) -> std::result::Result<String, ConfigError> {
+    pub fn resolve_set_id(explicit: Option<&str>) -> std::result::Result<String, ConfigError> {
         if let Some(id) = explicit {
             return Ok(id.to_string());
         }

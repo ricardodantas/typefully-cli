@@ -162,11 +162,7 @@ async fn cmd_sets(cli: &Cli, api: &impl TypefullyApi) -> Result<(), AppError> {
 }
 
 #[allow(clippy::too_many_lines)]
-async fn cmd_draft(
-    cli: &Cli,
-    api: &impl TypefullyApi,
-    cmd: &DraftCmd,
-) -> Result<(), AppError> {
+async fn cmd_draft(cli: &Cli, api: &impl TypefullyApi, cmd: &DraftCmd) -> Result<(), AppError> {
     match cmd {
         DraftCmd::Create {
             set,
@@ -175,7 +171,19 @@ async fn cmd_draft(
             publish_at,
             tag,
             media,
-        } => cmd_draft_create(cli, api, set.as_deref(), content.as_deref(), platform, publish_at.as_deref(), tag, media).await,
+        } => {
+            cmd_draft_create(
+                cli,
+                api,
+                set.as_deref(),
+                content.as_deref(),
+                platform,
+                publish_at.as_deref(),
+                tag,
+                media,
+            )
+            .await
+        }
         DraftCmd::List {
             set,
             status,
@@ -336,7 +344,10 @@ async fn cmd_draft_create(
 
     if posts.len() > 1 {
         body["posts"] = serde_json::json!(
-            posts.iter().map(|p| serde_json::json!({"content": p})).collect::<Vec<_>>()
+            posts
+                .iter()
+                .map(|p| serde_json::json!({"content": p}))
+                .collect::<Vec<_>>()
         );
     } else {
         body["content"] = serde_json::json!(text);
@@ -362,18 +373,11 @@ async fn cmd_draft_create(
     Ok(())
 }
 
-async fn cmd_media(
-    cli: &Cli,
-    api: &impl TypefullyApi,
-    cmd: &MediaCmd,
-) -> Result<(), AppError> {
+async fn cmd_media(cli: &Cli, api: &impl TypefullyApi, cmd: &MediaCmd) -> Result<(), AppError> {
     match cmd {
         MediaCmd::Upload { file, set } => {
             let set_id = AppConfig::resolve_set_id(set.as_deref())?;
-            let file_name = file
-                .file_name()
-                .and_then(|n| n.to_str())
-                .unwrap_or("file");
+            let file_name = file.file_name().and_then(|n| n.to_str()).unwrap_or("file");
             let data = tokio::fs::read(file).await?;
             let content_type = match file.extension().and_then(|e| e.to_str()) {
                 Some("png") => "image/png",
@@ -438,11 +442,7 @@ async fn cmd_media(
     }
 }
 
-async fn cmd_tags(
-    cli: &Cli,
-    api: &impl TypefullyApi,
-    cmd: &TagsCmd,
-) -> Result<(), AppError> {
+async fn cmd_tags(cli: &Cli, api: &impl TypefullyApi, cmd: &TagsCmd) -> Result<(), AppError> {
     match cmd {
         TagsCmd::List { set } => {
             let set_id = AppConfig::resolve_set_id(set.as_deref())?;

@@ -79,10 +79,7 @@ pub trait TypefullyApi: Send + Sync {
     ) -> std::result::Result<serde_json::Value, ApiError>;
 
     /// `GET /v2/social-sets/{set_id}/tags`
-    async fn list_tags(
-        &self,
-        set_id: &str,
-    ) -> std::result::Result<serde_json::Value, ApiError>;
+    async fn list_tags(&self, set_id: &str) -> std::result::Result<serde_json::Value, ApiError>;
 
     /// `POST /v2/social-sets/{set_id}/tags`
     async fn create_tag(
