@@ -7,6 +7,21 @@ description: "Manage social media content via the Typefully CLI. Create, schedul
 
 CLI client for the Typefully API v2. Binary: `typefully`.
 
+## Installation
+
+```bash
+# Homebrew
+brew install ricardodantas/tap/typefully
+
+# From crates.io
+cargo install typefully
+
+# From source
+git clone https://github.com/ricardodantas/typefully-cli.git
+cd typefully-cli
+cargo install --path .
+```
+
 ## Setup
 
 Config at `~/.config/typefully/config.toml`:
