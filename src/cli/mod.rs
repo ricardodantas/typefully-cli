@@ -59,6 +59,8 @@ pub enum Commands {
     /// Manage tags.
     #[command(subcommand)]
     Tags(TagsCmd),
+    /// Update typefully to the latest version.
+    Update,
 }
 
 /// Configuration subcommands.

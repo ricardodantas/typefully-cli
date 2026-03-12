@@ -46,12 +46,16 @@ async fn run(cli: &Cli) -> Result<(), AppError> {
         return cmd_config_init(cli).await;
     }
 
+    if matches!(cli.command, Commands::Update) {
+        return cmd_update_sync(cli);
+    }
+
     let api_key = AppConfig::resolve_api_key(cli.api_key.as_deref())?;
     let client = TypefullyClient::new(api_key);
 
     match &cli.command {
         Commands::Auth => cmd_auth(cli, &client).await,
-        Commands::Config(ConfigCmd::Init) => unreachable!(),
+        Commands::Config(ConfigCmd::Init) | Commands::Update => unreachable!(),
         Commands::Sets => cmd_sets(cli, &client).await,
         Commands::Draft(cmd) => cmd_draft(cli, &client, cmd).await,
         Commands::Media(cmd) => cmd_media(cli, &client, cmd).await,
@@ -73,6 +77,50 @@ async fn cmd_auth(cli: &Cli, api: &impl TypefullyApi) -> Result<(), AppError> {
         }
         if let Some(handle) = me.get("handle").and_then(|v| v.as_str()) {
             println!("  Handle: @{handle}");
+        }
+    }
+    Ok(())
+}
+
+fn cmd_update_sync(cli: &Cli) -> Result<(), AppError> {
+    use std::process::Command;
+
+    // Detect install method and update accordingly
+    let homebrew = Command::new("brew")
+        .args(["list", "typefully"])
+        .output()
+        .ok()
+        .is_some_and(|o| o.status.success());
+
+    if homebrew {
+        if !cli.quiet {
+            println!("{}", "Updating via Homebrew...".cyan());
+        }
+        let status = Command::new("brew")
+            .args(["upgrade", "typefully"])
+            .status()
+            .map_err(AppError::Io)?;
+        if status.success() {
+            print_success("Updated successfully via Homebrew.");
+        } else {
+            print_error("Homebrew upgrade failed. Try running: brew upgrade typefully");
+        }
+    } else {
+        // Fall back to cargo install
+        if !cli.quiet {
+            println!(
+                "{}",
+                "Not installed via Homebrew. Updating via cargo...".cyan()
+            );
+        }
+        let status = Command::new("cargo")
+            .args(["install", "typefully-cli"])
+            .status()
+            .map_err(AppError::Io)?;
+        if status.success() {
+            print_success("Updated successfully via cargo.");
+        } else {
+            print_error("Cargo install failed. Try running: cargo install typefully-cli");
         }
     }
     Ok(())
