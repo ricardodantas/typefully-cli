@@ -1,7 +1,7 @@
-Output assets/demo.gif
+Output assets/screenshot.png
 
 Set Width 800
-Set Height 500
+Set Height 480
 Set FontSize 22
 Set FontFamily "monospace"
 Set LetterSpacing 0
@@ -9,23 +9,17 @@ Set Theme "Catppuccin Mocha"
 Set Padding 15
 Set WindowBar Colorful
 Set WindowBarSize 40
-Set TypingSpeed 30ms
-Set Framerate 15
+Set TypingSpeed 1ms
 
 Hide
 Env PS1 "$ "
 Type "clear"
 Enter
+Sleep 300ms
+Type "typefully --help"
+Enter
+Sleep 1s
 Show
-
 Sleep 500ms
 
-Type "typefully --help"
-Sleep 300ms
-Enter
-Sleep 4s
-
-Type "typefully draft create --help"
-Sleep 300ms
-Enter
-Sleep 5s
+Screenshot assets/screenshot.png

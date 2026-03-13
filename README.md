@@ -13,7 +13,7 @@
 ---
 
 <p align="center">
-  <img src="assets/demo.gif" alt="typefully CLI demo" width="800">
+  <img src="assets/screenshot.png" alt="typefully CLI" width="800">
 </p>
 
 ## ✨ Features
