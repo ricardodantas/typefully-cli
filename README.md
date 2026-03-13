@@ -12,6 +12,10 @@
 
 ---
 
+<p align="center">
+  <img src="assets/demo.gif" alt="typefully CLI demo" width="800">
+</p>
+
 ## ✨ Features
 
 - 📝 **Create drafts** with rich content, tags, and media attachments
